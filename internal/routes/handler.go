@@ -4,13 +4,10 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
-	"os"
 	"project1540-api/graph"
 	"project1540-api/graph/generated"
 	"project1540-api/internal/facade"
 )
-
-const defaultPort = "8080"
 
 type Handler struct {
 	Resolver graph.Resolver
@@ -18,12 +15,6 @@ type Handler struct {
 }
 
 func (h *Handler) InitializeRoutes() *chi.Mux {
-
-	port := os.Getenv("PORT")
-
-	if port == "" {
-		port = defaultPort
-	}
 
 	r := chi.NewRouter()
 

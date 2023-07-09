@@ -4,6 +4,7 @@ import (
 	"github.com/NYTimes/gziphandler"
 	"github.com/calebtraceyco/http/server"
 	log "github.com/sirupsen/logrus"
+	"os"
 	"project1540-api/internal/facade"
 	"project1540-api/internal/routes"
 )
@@ -14,6 +15,11 @@ const (
 
 func main() {
 	defer panicQuit()
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = defaultPort
+	}
 
 	handler := routes.Handler{
 		Service: facade.Service{},
@@ -22,8 +28,8 @@ func main() {
 	router := handler.InitializeRoutes()
 
 	//router.Use(middlewa)
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", defaultPort)
-	log.Fatal(server.ListenAndServe(defaultPort, "dev", gziphandler.GzipHandler(router)))
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(server.ListenAndServe(port, "dev", gziphandler.GzipHandler(router)))
 
 }
 

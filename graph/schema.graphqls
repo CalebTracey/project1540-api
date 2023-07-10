@@ -2,7 +2,16 @@
 #
 # https://gqlgen.com/getting-started/
 
+
 type Request @goModel(model: "project1540-api/external/models.Request") {
+  ID: String!,
+}
+
+type APIResponse @goModel(model: "project1540-api/external/models.APIResponse") {
+  Results: [Response]
+}
+
+type Response @goModel(model: "project1540-api/external/models.Response") {
   ID: String!,
 }
 
@@ -35,9 +44,9 @@ directive @goTag(
 #  name: String!
 #}
 #
-#type Query {
-#  todos: [Todo!]!
-#}
+type Query {
+  request: Request!
+}
 #
 #input NewTodo {
 #  text: String!

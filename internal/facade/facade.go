@@ -3,21 +3,22 @@ package facade
 import (
 	"context"
 	log "github.com/sirupsen/logrus"
-	"project1540-api/internal/dao/s3"
+	"project1540-api/external/models"
+	daoS3 "project1540-api/internal/dao/s3"
 )
 
 type IFacade interface {
-	TestFacade(ctx context.Context) string
+	UploadS3(ctx context.Context, input models.InputFile) *models.ErrorLog
 }
 
 type Service struct {
-	S3DAO s3.DAO
+	S3DAO daoS3.DAO
 }
 
-func (s Service) TestFacade(ctx context.Context) string {
-	if err := s.S3DAO.PutObject(ctx); err != nil {
+func (s Service) UploadS3(ctx context.Context, input models.InputFile) *models.ErrorLog {
+	if err := s.S3DAO.PutObject(ctx, input); err != nil {
 		log.Error(err)
-		return ""
+		return err
 	}
-	return "Test!"
+	return nil
 }

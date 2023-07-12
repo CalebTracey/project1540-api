@@ -1,16 +1,12 @@
 package models
 
-type APIResponse struct {
-	Results Responses `json:"results,omitempty"`
-	Message Message   `json:"message,omitempty"`
-}
-
-type Responses []Response
-type Response struct {
-	ID string `json:"id"`
+type Request struct {
+	ID string `json:"id,omitempty"`
 }
 
 type Message struct {
+	Hostname  string
+	Time      string
 	Status    string    `json:"status,omitempty"`
 	ErrorLogs ErrorLogs `json:"error_logs,omitempty"`
 }

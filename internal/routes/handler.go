@@ -59,42 +59,47 @@ func (h *Handler) UploadS3Handler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		// access the file from http POST request
-		if file, header, err := accessFile(r, w); err != nil {
+		if file, header, err := accessFile(r, w); err == nil {
+			if tempFile, fileErr := createTempFile(w); fileErr == nil {
+				if fileInfo, copyErr := copyFile(tempFile, file); copyErr == nil && fileInfo.IsDir() {
+					// copy file, convert file types, and get file info
+					openUploadFile(w, tempFile)
+
+					if errLog := h.Service.S3.UploadS3Object(r.Context(),
+						s3.NewUploadS3Request(s3.FromFile(header, fileInfo, tempFile, devBucket)),
+					); errLog == nil {
+
+						w.Header().Set("Content-Type", "application/json")
+						w.WriteHeader(http.StatusOK)
+
+						hostname, _ := os.Hostname()
+						_ = json.NewEncoder(w).Encode(
+							models.Message{
+								Hostname: hostname,
+								Time:     fmt.Sprintf("%.2fs", time.Since(start).Seconds()),
+								Status:   http.StatusText(http.StatusOK),
+							},
+						)
+						log.Infof("Time taken: %.2fs", time.Since(start).Seconds())
+
+					} else {
+						routeHandlerError(w, *errLog, errLog.StatusCode)
+						return
+					}
+				} else if copyErr != nil {
+					routeHandlerError(w, copyErr.Error(), http.StatusInternalServerError)
+					return
+				} else {
+					log.Infof("fileInfo: %v", fileInfo)
+					return
+				}
+			} else {
+				routeHandlerError(w, fileErr.Error(), http.StatusInternalServerError)
+				return
+			}
+		} else {
 			routeHandlerError(w, err.Error(), http.StatusBadRequest)
 			return
-		} else if tempFile, fileErr := createTempFile(w); fileErr != nil {
-			routeHandlerError(w, fileErr.Error(), http.StatusInternalServerError)
-			return
-		} else if fileInfo, copyErr := copyFile(tempFile, file); copyErr == nil && fileInfo.IsDir() {
-			openUploadFile(w, tempFile)
-			// copy file, convert file types, and get file info
-			if errLog := h.Service.S3.UploadS3Object(r.Context(),
-				s3.NewUploadS3Request(s3.FromFile(header, fileInfo, tempFile, devBucket)),
-			); errLog != nil {
-
-				routeHandlerError(w, *errLog, errLog.StatusCode)
-				return
-
-			} else {
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(http.StatusOK)
-
-				hostname, _ := os.Hostname()
-
-				_ = json.NewEncoder(w).Encode(
-					models.Message{
-						Hostname: hostname,
-						Time:     fmt.Sprintf("%.2fs", time.Since(start).Seconds()),
-						Status:   http.StatusText(http.StatusOK),
-					},
-				)
-				log.Infof("Time taken: %.2fs", time.Since(start).Seconds())
-			}
-		} else if err != nil {
-			routeHandlerError(w, err.Error(), http.StatusInternalServerError)
-			log.Error(err)
-		} else {
-			log.Infof("file info: %v", fileInfo)
 		}
 	}
 }
@@ -128,7 +133,6 @@ func (h *Handler) DownloadS3Handler() http.HandlerFunc {
 func accessFile(r *http.Request, w http.ResponseWriter) (multipart.File, *multipart.FileHeader, error) {
 	if formFile, header, err := r.FormFile("file"); err != nil {
 		routeHandlerError(w, err.Error(), http.StatusBadRequest)
-		//log.Errorf("accessFile: form file error: %s", err.Error())
 		return formFile, header, fmt.Errorf("accessFile: %w", err)
 	} else {
 		defer func(file multipart.File) {

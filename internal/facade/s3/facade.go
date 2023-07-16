@@ -15,7 +15,7 @@ type IS3Facade interface {
 }
 
 type Service struct {
-	S3DAO daoS3.DAO
+	S3DAO daoS3.IDAO
 }
 
 func (s Service) UploadS3Object(ctx context.Context, request s3.UploadS3Request) *models.ErrorLog {

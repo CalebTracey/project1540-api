@@ -1,8 +1,11 @@
 package s3
 
 import (
+	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"strconv"
 )
@@ -10,6 +13,13 @@ import (
 type DownloadS3Request struct {
 	FileName   string `json:"fileName,omitempty"`
 	BucketName string `json:"bucketName,omitempty"`
+}
+
+func (r *DownloadS3Request) FromJSON(req *http.Request) DownloadS3Request {
+	if err := json.NewDecoder(req.Body).Decode(&r); err != nil {
+		log.Errorf("FromJSON: %v", err)
+	}
+	return *r
 }
 
 type UploadS3Request struct {
@@ -23,17 +33,15 @@ type UploadS3Request struct {
 	File       io.ReadCloser `json:"file,omitempty"`
 }
 
-type RequestMapper func(*UploadS3Request)
+type RequestOptions func(*UploadS3Request)
 
-func NewUploadS3Request(req RequestMapper) UploadS3Request {
+func NewUploadS3Request(options RequestOptions) UploadS3Request {
 	newRequest := new(UploadS3Request)
-
-	req(newRequest)
-
+	options(newRequest)
 	return *newRequest
 }
 
-func FromFile(header *multipart.FileHeader, info os.FileInfo, tempFile *os.File, dest string) RequestMapper {
+func FromFile(header *multipart.FileHeader, info os.FileInfo, tempFile *os.File, dest string) RequestOptions {
 	return func(r *UploadS3Request) {
 		r.Name = header.Filename
 		r.Size = strconv.Itoa(int(info.Size()))
@@ -42,12 +50,6 @@ func FromFile(header *multipart.FileHeader, info os.FileInfo, tempFile *os.File,
 		r.File = tempFile
 	}
 }
-
-//func (r *UploadS3Request) FromFile(header *multipart.FileHeader, info os.FileInfo, tempFile *os.File, dest string) *UploadS3Request {
-//r.Name = header.Filename
-//r.
-//	return r
-//}
 
 type Tags []Tag
 

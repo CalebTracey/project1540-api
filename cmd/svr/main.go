@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"github.com/NYTimes/gziphandler"
+	config "github.com/calebtracey/config-yaml"
 	"github.com/go-chi/chi/v5/middleware"
+	"project1540-api/cmd/svr/initialize"
 	"time"
 
 	"github.com/calebtraceyco/http/server"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 func main() {
@@ -17,23 +18,23 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if port = os.Getenv(portEnv); port == "" {
-		port = defaultPort
-	}
+	appConfig := config.New(configPath)
 
-	handler := initializeService(ctx)
-
-	log.Fatal(
-		server.ListenAndServe(port, "dev", gziphandler.GzipHandler(
-			handler.InitializeRoutes(
-				middleware.RequestID,
-				middleware.RealIP,
-				middleware.Logger,
-				middleware.Recoverer,
-				middleware.Timeout(60*time.Second),
+	if service, svcErr := initialize.NewService(ctx, appConfig); svcErr != nil {
+		log.Panicln(svcErr)
+	} else {
+		log.Fatal(server.ListenAndServe(
+			port, "dev", gziphandler.GzipHandler(
+				service.InitializeRoutes(
+					middleware.RequestID,
+					middleware.RealIP,
+					middleware.Logger,
+					middleware.Recoverer,
+					middleware.Timeout(60*time.Second),
+				),
 			),
-		)),
-	)
+		))
+	}
 }
 
 func panicQuit() {
@@ -46,7 +47,7 @@ func panicQuit() {
 var port string
 
 const (
+	configPath  = "config.yaml"
 	defaultPort = "8080"
-	roleARN     = "arn:aws:iam::128120887705:role/s3-dev"
 	portEnv     = "PORT"
 )

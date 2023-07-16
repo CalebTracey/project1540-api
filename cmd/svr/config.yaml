@@ -1,0 +1,18 @@
+Env: "local"
+Port: "8080"
+AppName: "project1540-api"
+ComponentConfigs:
+  Client:
+    Timeout: 15
+    IdleConnTimeout: 15
+    MaxIdleConsPerHost: 50
+    MaxConsPerHost: 0
+    DisableCompression: 2
+    InsecureSkipVerify: 1
+Databases:
+  - Name: "PSQL"
+    Database: "postgres"
+    Server: "db.ixtnpmyylxetisdrjjqm.supabase.co:5432"
+    Username: "postgres"
+    Scheme: "postgres"
+    AuthEnvironmentVariable: "SUPABASE_DB_PASSWORD"

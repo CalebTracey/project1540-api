@@ -1,9 +1,5 @@
 package models
 
-type Request struct {
-	ID string `json:"id,omitempty"`
-}
-
 type Message struct {
 	Hostname  string
 	Time      string

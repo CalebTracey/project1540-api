@@ -22,4 +22,4 @@
 go.work
 
 /.idea/
-/cmd/svr/.env
+/cmd/svr/dev.env

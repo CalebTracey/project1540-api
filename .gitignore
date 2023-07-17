@@ -24,3 +24,4 @@ go.work
 
 /.idea/
 /cmd/svr/dev.env
+/cmd/svr/config.yaml

@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/NYTimes/gziphandler"
-	config "github.com/calebtracey/config-yaml"
+	"github.com/calebtraceyco/config"
 	"github.com/go-chi/chi/v5/middleware"
 	"project1540-api/cmd/svr/initialize"
 	"time"

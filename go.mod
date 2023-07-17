@@ -10,10 +10,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.36.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.2
 	github.com/calebtracey/config-yaml v1.0.13
-	github.com/calebtraceyco/config v0.1.3
 	github.com/calebtraceyco/http v0.1.0
 	github.com/go-chi/chi/v5 v5.0.8
+	github.com/google/uuid v1.3.0
+	github.com/jackc/pgx/v5 v5.4.2
+	github.com/lib/pq v1.10.9
 	github.com/sirupsen/logrus v1.9.3
+	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
+	golang.org/x/sync v0.3.0
 )
 
 require (
@@ -39,22 +43,17 @@ require (
 	github.com/gocolly/colly v1.2.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
-	github.com/jackc/pgx/v5 v5.4.2 // indirect
 	github.com/jackc/puddle/v2 v2.2.0 // indirect
 	github.com/jinzhu/copier v0.3.5 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/lib/pq v1.10.9 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/stretchr/testify v1.8.3 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
 	golang.org/x/net v0.12.0 // indirect
-	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect

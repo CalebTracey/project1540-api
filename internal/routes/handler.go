@@ -203,15 +203,6 @@ func writeResponse(w http.ResponseWriter, start time.Time) {
 	)
 }
 
-func writeResponseFromResults(w http.ResponseWriter, start time.Time, results any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	//hostname, _ := os.Hostname()
-
-	_ = json.NewEncoder(w).Encode(&results)
-}
-
 const (
 	devBucket = "project1540-dev"
 )

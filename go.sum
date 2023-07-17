@@ -48,8 +48,6 @@ github.com/aws/aws-sdk-go-v2/service/sts v1.19.3 h1:e5mnydVdCVWxP+5rPAGi2PYxC7u2
 github.com/aws/aws-sdk-go-v2/service/sts v1.19.3/go.mod h1:yVGZA1CPkmUhBdA039jXNJJG7/6t+G+EBWmFq23xqnY=
 github.com/aws/smithy-go v1.13.5 h1:hgz0X/DX0dGqTYpGALqXJoRKRj5oQ7150i5FdTePzO8=
 github.com/aws/smithy-go v1.13.5/go.mod h1:Tg+OJXh4MB2R/uN61Ko2f6hTZwB/ZYGOtib8J3gBHzA=
-github.com/calebtracey/config-yaml v1.0.13 h1:vJOy/LyXu3YKDtf1cACncWoFqaei7v179QnGp6qPOFA=
-github.com/calebtracey/config-yaml v1.0.13/go.mod h1:f0g7ScmjGRphNby3jGx8TmVS3ZzEnyjGCGYr7zo2cL8=
 github.com/calebtraceyco/config v0.1.4 h1:z/7lM34rlaPhDzJIE7vJvLMn6dbD7Rl3HC6oSlQm1cw=
 github.com/calebtraceyco/config v0.1.4/go.mod h1:hamLuCNVZiS6e5yvlH3qgfjl7mBKXVaa46It3VBr1QI=
 github.com/calebtraceyco/http v0.1.0 h1:rZbE2oUMUED8EYezYvDk0/ObG9VIXVfivkOb7agNDu4=

@@ -19,7 +19,6 @@ require (
 	golang.org/x/sync v0.3.0
 )
 
-//replace github.com/calebtracey/config-yaml => github.com/calebtraceyco/config
 require (
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect

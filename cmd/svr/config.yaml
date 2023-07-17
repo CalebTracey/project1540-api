@@ -10,9 +10,10 @@ ComponentConfigs:
     DisableCompression: 2
     InsecureSkipVerify: 1
 Databases:
-  - Name: "PSQL"
+  - Name: "POSTGRES"
     Database: "postgres"
     Server: "db.ixtnpmyylxetisdrjjqm.supabase.co:5432"
     Username: "postgres"
     Scheme: "postgres"
+    AuthRequired: "true"
     AuthEnvironmentVariable: "SUPABASE_DB_PASSWORD"

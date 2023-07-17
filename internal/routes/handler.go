@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"project1540-api/external/models"
+	"project1540-api/external/models/postgres"
 	"project1540-api/external/models/s3"
 	"project1540-api/internal/facade"
 	"time"
@@ -33,8 +34,47 @@ func (h *Handler) InitializeRoutes(options ...MiddlewareOption) *chi.Mux {
 	// REST endpoints
 	r.Post("/put", h.UploadS3Handler())
 	r.Post("/get", h.DownloadS3Handler())
+	r.Post("/newFile", h.InsertNewFileHandler())
+
+	r.Post("/update", h.UpdateDatabaseWithS3Data())
 
 	return r
+}
+
+func (h *Handler) UpdateDatabaseWithS3Data() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		if serviceErr := h.Service.UpdateDatabaseFromS3Bucket(
+			r.Context(), devBucket,
+		); serviceErr == nil {
+			writeResponse(w, start)
+		} else {
+			log.Errorf("InsertNewFileHandler: %v", *serviceErr)
+			routeHandlerError(w, *serviceErr, http.StatusBadRequest)
+		}
+	}
+}
+
+func (h *Handler) InsertNewFileHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		var fileRequest *postgres.NewFileRequest
+		if err := fileRequest.FromJSON(r); err != nil {
+			log.Errorf("InsertNewFileHandler: %v", err)
+			routeHandlerError(w, err.Error(), http.StatusBadRequest)
+		}
+
+		if serviceErr := h.Service.InsertNewFileByS3Bucket(
+			r.Context(), *fileRequest,
+		); serviceErr == nil {
+			writeResponse(w, start)
+		} else {
+			log.Errorf("InsertNewFileHandler: %v", *serviceErr)
+			routeHandlerError(w, *serviceErr, http.StatusBadRequest)
+		}
+	}
 }
 
 func (h *Handler) UploadS3Handler() http.HandlerFunc {

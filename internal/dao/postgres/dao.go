@@ -2,18 +2,31 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
+	"github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/lib/pq"
+	log "github.com/sirupsen/logrus"
+	"project1540-api/external/models/postgres"
 )
 
 type IDAO interface {
-	InsertOne(ctx context.Context, query string) error
+	InsertOneFile(ctx context.Context, query string, payload *postgres.File) error
 }
 
 type DAO struct {
-	*sql.DB
+	*pgxpool.Pool
 }
 
-func (s DAO) InsertOne(ctx context.Context, query string) error {
+func (s DAO) InsertOneFile(ctx context.Context, query string, payload *postgres.File) error {
 
-	return nil // success
+	if result, err := s.Pool.Exec(
+		ctx, query, &payload.ID, &payload.Name, &payload.URL, &payload.Tags, &payload.Type, &payload.CreatedDate,
+	); err == nil {
+		log.Infoln("InsertOneFile: success;")
+		log.Infoln(result.String())
+		log.Infoln(result.RowsAffected())
+		return nil // success
+
+	} else {
+		return err
+	}
 }

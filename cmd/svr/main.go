@@ -24,7 +24,7 @@ func main() {
 		log.Panicln(svcErr)
 	} else {
 		log.Fatal(server.ListenAndServe(
-			port, "dev", gziphandler.GzipHandler(
+			appConfig.Port.Value, appConfig.Env.Value, gziphandler.GzipHandler(
 				service.InitializeRoutes(
 					middleware.RequestID,
 					middleware.RealIP,

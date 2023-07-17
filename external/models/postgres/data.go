@@ -3,23 +3,33 @@ package postgres
 import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 type File struct {
-	ID   uuid.UUID
-	Name string
+	ID          *uuid.UUID
+	Name        string
+	URL         string
+	Tags        []string
+	Type        string
+	CreatedDate *time.Time
+	UpdatedDate *time.Time
 }
 
 type FileOption func(*File)
 
-func New(options ...FileOption) (file *File) {
-	file = new(File)
-	file.generateFileID()
+func NewFile(options ...FileOption) *File {
+	newFile := new(File)
+	newFile.generateFileID()
 
 	for _, option := range options {
-		option(file)
+		option(newFile)
 	}
-	return file
+
+	createdDate := time.Now()
+	newFile.CreatedDate = &createdDate
+
+	return newFile
 }
 
 func WithName(name string) FileOption {
@@ -28,10 +38,28 @@ func WithName(name string) FileOption {
 	}
 }
 
+func WithURL(url string) FileOption {
+	return func(f *File) {
+		f.URL = url
+	}
+}
+
+func WithTags(tags []string) FileOption {
+	return func(f *File) {
+		f.Tags = tags
+	}
+}
+
+func WithType(fileType string) FileOption {
+	return func(f *File) {
+		f.Type = fileType
+	}
+}
+
 func (f *File) generateFileID() {
 	if u, err := uuid.NewRandom(); err != nil {
 		log.Errorf("generateFileID: %s", err.Error())
 	} else {
-		f.ID = u
+		f.ID = &u
 	}
 }

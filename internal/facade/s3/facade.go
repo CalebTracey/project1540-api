@@ -12,6 +12,7 @@ import (
 type IS3Facade interface {
 	UploadS3Object(ctx context.Context, request s3.UploadS3Request) *models.ErrorLog
 	DownloadS3Object(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, *models.ErrorLog)
+	GetS3ObjectNames(ctx context.Context, bucketName string) ([]string, *models.ErrorLog)
 }
 
 type Service struct {
@@ -30,4 +31,9 @@ func (s Service) UploadS3Object(ctx context.Context, request s3.UploadS3Request)
 func (s Service) DownloadS3Object(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, *models.ErrorLog) {
 	// TODO: validate request
 	return s.S3DAO.GetObject(ctx, request)
+}
+
+func (s Service) GetS3ObjectNames(ctx context.Context, bucketName string) ([]string, *models.ErrorLog) {
+	// TODO: validate request
+	return s.S3DAO.GetAllObjectNames(ctx, bucketName)
 }

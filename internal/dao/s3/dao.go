@@ -12,6 +12,7 @@ import (
 type IDAO interface {
 	PutObject(ctx context.Context, input s3.UploadS3Request) *models.ErrorLog
 	GetObject(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, *models.ErrorLog)
+	GetAllObjectNames(ctx context.Context, bucketName string) ([]string, *models.ErrorLog)
 }
 
 type DAO struct {
@@ -19,6 +20,7 @@ type DAO struct {
 }
 
 func (s DAO) PutObject(ctx context.Context, input s3.UploadS3Request) *models.ErrorLog {
+
 	if _, err := s.Client.PutObject(
 		ctx, &svcS3.PutObjectInput{
 			Bucket: &input.DestBucket,
@@ -52,4 +54,31 @@ func (s DAO) GetObject(ctx context.Context, request s3.DownloadS3Request) (*svcS
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
+}
+
+func (s DAO) GetAllObjectNames(ctx context.Context, bucketName string) ([]string, *models.ErrorLog) {
+	var objectNames []string
+
+	// Paginate through the list of objects and collect object names
+	paginator := svcS3.NewListObjectsV2Paginator(
+		s.Client, &svcS3.ListObjectsV2Input{Bucket: &bucketName},
+	)
+
+	for paginator.HasMorePages() {
+		if resp, err := paginator.NextPage(ctx); err == nil {
+			// Add the object names from the current page
+			for _, obj := range resp.Contents {
+				objectNames = append(objectNames, *obj.Key)
+			}
+		} else {
+			return nil, &models.ErrorLog{
+				RootCause:  err.Error(),
+				Trace:      "GetAllObjectNames",
+				StatusCode: http.StatusInternalServerError,
+			}
+		}
+
+	}
+
+	return objectNames, nil
 }

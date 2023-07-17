@@ -8,6 +8,7 @@ import (
 	postgresSrc "project1540-api/internal/dao/postgres"
 )
 
+//go:generate mockgen -source=facade.go -destination=mock/facade.go -package=postgres
 type IFacade interface {
 	InsertNewFileDetails(ctx context.Context, fileName, fileType, url string, tags []string) *models.ErrorLog
 	SearchFilesByTag(ctx context.Context, tags []string) postgres.FileResponse
@@ -53,9 +54,8 @@ func (s Service) SearchFilesByTag(ctx context.Context, tags []string) postgres.F
 			},
 		}
 	}
-	query := `SELECT * FROM file.video_file WHERE tags && $1`
 
-	if results, searchErr := s.PSQLDAO.SearchFilesByTag(ctx, query, tags); searchErr == nil {
+	if results, searchErr := s.PSQLDAO.SearchFilesByTag(ctx, SearchByTagQuery, tags); searchErr == nil {
 
 		return postgres.FileResponse{Files: results}
 	} else {
@@ -73,3 +73,5 @@ func (s Service) SearchFilesByTag(ctx context.Context, tags []string) postgres.F
 		}
 	}
 }
+
+const SearchByTagQuery = `SELECT * FROM file.video_file WHERE tags && $1`

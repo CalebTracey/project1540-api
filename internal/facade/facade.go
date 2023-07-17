@@ -14,6 +14,7 @@ import (
 	"project1540-api/internal/services/parser"
 )
 
+//go:generate mockgen -source=facade.go -destination=mock/facade.go -package=facade
 type IFacade interface {
 	UpdateDatabaseFromS3Bucket(ctx context.Context, bucket string) *models.ErrorLog
 	InsertNewFileByS3Bucket(ctx context.Context, req postgres2.NewFileRequest) *models.ErrorLog
@@ -40,11 +41,11 @@ func (s Service) UpdateDatabaseFromS3Bucket(ctx context.Context, bucket string) 
 
 		for _, fileName := range objectNames {
 			fileName := fileName
-
 			g.Go(func() error {
 				if tags, fileType, parseErr := s.Parser.ExtractTags(fileName); parseErr == nil {
+					// TODO: add some sort of S3 pre-signed URL generation
 					if postgresErr := s.PostgresQL.InsertNewFileDetails(
-						ctx, fileName, fileType, "url", tags,
+						ctx, fileName, fileType, "temp", tags,
 					); postgresErr == nil {
 						return nil // success
 					} else {

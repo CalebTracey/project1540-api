@@ -9,6 +9,7 @@ import (
 	daoS3 "project1540-api/internal/dao/s3"
 )
 
+//go:generate mockgen -source=facade.go -destination=mock/facade.go -package=s3
 type IS3Facade interface {
 	UploadS3Object(ctx context.Context, request s3.UploadS3Request) *models.ErrorLog
 	DownloadS3Object(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, *models.ErrorLog)

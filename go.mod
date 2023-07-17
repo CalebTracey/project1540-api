@@ -15,6 +15,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v5 v5.4.2
 	github.com/sirupsen/logrus v1.9.3
+	go.uber.org/mock v0.2.0
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 	golang.org/x/sync v0.3.0
 )

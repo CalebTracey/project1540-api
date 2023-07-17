@@ -9,6 +9,7 @@ import (
 	"project1540-api/external/models/postgres"
 )
 
+//go:generate mockgen -source=dao.go -destination=mock/dao.go -package=postgres
 type IDAO interface {
 	InsertOneFile(ctx context.Context, query string, payload *postgres.File) error
 	SearchFilesByTag(ctx context.Context, query string, tags []string) (files []*postgres.File, err error)

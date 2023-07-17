@@ -1,9 +1,10 @@
 package models
 
 type Message struct {
-	Hostname  string
-	Time      string
+	Hostname  string    `json:"hostname,omitempty"`
+	Time      string    `json:"time,omitempty"`
 	Status    string    `json:"status,omitempty"`
+	Count     string    `json:"count,omitempty"`
 	ErrorLogs ErrorLogs `json:"error_logs,omitempty"`
 }
 type ErrorLogs []ErrorLog

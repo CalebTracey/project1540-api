@@ -10,8 +10,8 @@ import (
 	"project1540-api/internal/facade"
 	facadePsql "project1540-api/internal/facade/postgres"
 	facadeS3 "project1540-api/internal/facade/s3"
-	"project1540-api/internal/parser"
 	"project1540-api/internal/routes"
+	"project1540-api/internal/services/parser"
 )
 
 const (

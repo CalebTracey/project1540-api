@@ -11,7 +11,7 @@ import (
 	postgres2 "project1540-api/external/models/postgres"
 	"project1540-api/internal/facade/postgres"
 	"project1540-api/internal/facade/s3"
-	"project1540-api/internal/parser"
+	"project1540-api/internal/services/parser"
 )
 
 type IFacade interface {

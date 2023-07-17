@@ -20,6 +20,8 @@ require (
 	golang.org/x/sync v0.3.0
 )
 
+replace github.com/calebtracey/config-yaml v1.0.13 => /Users/calebtracey/Code/config-yaml
+
 require (
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
@@ -46,9 +48,10 @@ require (
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
-	github.com/jackc/puddle/v2 v2.2.0 // indirect
+	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/jinzhu/copier v0.3.5 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
+	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/stretchr/testify v1.8.3 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -11,7 +12,9 @@ import (
 func accessFile(r *http.Request) (multipart.File, *multipart.FileHeader, error) {
 	if formFile, header, err := r.FormFile("file"); err == nil {
 		defer func(file multipart.File) {
-			_ = file.Close()
+			if closeErr := file.Close(); closeErr != nil {
+				log.Errorf("accessFile: %v", closeErr)
+			}
 		}(formFile)
 		return formFile, header, err
 	} else {
@@ -24,7 +27,9 @@ func createTempFile() (*os.File, error) {
 		return nil, err
 	} else {
 		defer func(name string) {
-			_ = os.Remove(name)
+			if removeErr := os.Remove(name); removeErr != nil {
+				log.Errorf("createTempFile: %v", removeErr)
+			}
 		}(tempFile.Name())
 		return tempFile, nil
 	}
@@ -37,8 +42,11 @@ func copyFile(tempFile *os.File, file multipart.File) (os.FileInfo, error) {
 	if _, err := io.Copy(tempFile, file); err != nil {
 		return nil, fmt.Errorf("copyFile: %w", err)
 	} else {
-		fileInfo, _ := tempFile.Stat()
-		return fileInfo, nil
+		if fileInfo, statErr := tempFile.Stat(); statErr == nil {
+			return fileInfo, nil
+		} else {
+			return fileInfo, fmt.Errorf("copyFile: %w", statErr)
+		}
 	}
 }
 

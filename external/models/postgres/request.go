@@ -17,3 +17,14 @@ func (r *NewFileRequest) FromJSON(req *http.Request) error {
 	}
 	return nil // success
 }
+
+type SearchFilesByTagRequest struct {
+	Tags []string `json:"tags"`
+}
+
+func (r *SearchFilesByTagRequest) FromJSON(req *http.Request) error {
+	if err := json.NewDecoder(req.Body).Decode(r); err != nil {
+		return fmt.Errorf("FromJSON: %w", err)
+	}
+	return nil // success
+}

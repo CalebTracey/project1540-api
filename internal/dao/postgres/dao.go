@@ -3,13 +3,15 @@ package postgres
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
-	_ "github.com/lib/pq"
+	//"github.com/lib/pq"
+	//_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 	"project1540-api/external/models/postgres"
 )
 
 type IDAO interface {
 	InsertOneFile(ctx context.Context, query string, payload *postgres.File) error
+	SearchFilesByTag(ctx context.Context, query string, tags []string) (files []*postgres.File, err error)
 }
 
 type DAO struct {
@@ -29,4 +31,34 @@ func (s DAO) InsertOneFile(ctx context.Context, query string, payload *postgres.
 	} else {
 		return err
 	}
+}
+
+func (s DAO) SearchFilesByTag(ctx context.Context, query string, tags []string) (files []*postgres.File, err error) {
+	rows, err := s.Pool.Query(ctx, query, tags)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var file postgres.File
+		if scanErr := rows.Scan(
+			&file.ID,
+			&file.Name,
+			&file.Tags,
+			&file.CreatedDate,
+			&file.UpdatedDate,
+			&file.URL,
+			&file.Type,
+		); scanErr != nil {
+			return nil, scanErr
+		}
+		files = append(files, &file)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return files, nil
 }

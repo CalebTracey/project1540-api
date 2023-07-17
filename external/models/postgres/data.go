@@ -6,14 +6,16 @@ import (
 	"time"
 )
 
+type Files []*File
+
 type File struct {
-	ID          *uuid.UUID
-	Name        string
-	URL         string
-	Tags        []string
-	Type        string
-	CreatedDate *time.Time
-	UpdatedDate *time.Time
+	ID          *uuid.UUID `db:"id"`
+	Name        string     `db:"name"`
+	Tags        []string   `db:"tags"`
+	CreatedDate *time.Time `db:"created_on"`
+	UpdatedDate *time.Time `db:"updated_on"`
+	URL         string     `db:"url"`
+	Type        string     `db:"type"`
 }
 
 type FileOption func(*File)

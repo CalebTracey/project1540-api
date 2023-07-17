@@ -24,7 +24,7 @@ func main() {
 		log.Panicln(svcErr)
 	} else {
 		log.Fatal(server.ListenAndServe(
-			appConfig.Port.Value, appConfig.Env.Value, gziphandler.GzipHandler(
+			appConfig.Port, appConfig.Env, gziphandler.GzipHandler(
 				service.InitializeRoutes(
 					middleware.RequestID,
 					middleware.RealIP,
@@ -44,10 +44,6 @@ func panicQuit() {
 	}
 }
 
-var port string
-
 const (
-	configPath  = "config.yaml"
-	defaultPort = "8080"
-	portEnv     = "PORT"
+	configPath = "config.yaml"
 )

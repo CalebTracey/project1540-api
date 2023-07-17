@@ -10,6 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// TODO: implement this in config-yaml module
+
 func NewClient(ctx context.Context) *s3.Client {
 	if cfg, err := config.LoadDefaultConfig(ctx); err == nil {
 		return s3.NewFromConfig(cfg, s3ConfigOptions(cfg))

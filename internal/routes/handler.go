@@ -14,6 +14,7 @@ import (
 	"project1540-api/external/models/postgres"
 	"project1540-api/external/models/s3"
 	"project1540-api/internal/facade"
+	"strconv"
 	"time"
 )
 
@@ -35,23 +36,57 @@ func (h *Handler) InitializeRoutes(options ...MiddlewareOption) *chi.Mux {
 	r.Post("/put", h.UploadS3Handler())
 	r.Post("/get", h.DownloadS3Handler())
 	r.Post("/newFile", h.InsertNewFileHandler())
-
 	r.Post("/update", h.UpdateDatabaseWithS3Data())
+	r.Post("/search", h.SearchFilesByTagHandler())
 
 	return r
+}
+
+func (h *Handler) SearchFilesByTagHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		fileRequest := new(postgres.SearchFilesByTagRequest)
+		if err := fileRequest.FromJSON(r); err != nil {
+			log.Errorf("SearchFilesByTagHandler: %v", err)
+			routeHandlerError(w, err.Error(), http.StatusBadRequest)
+		}
+
+		if response := h.Service.PostgresQL.SearchFilesByTag(
+			r.Context(), fileRequest.Tags,
+		); response.Message.ErrorLogs == nil {
+
+			hostname, _ := os.Hostname()
+			response.Message.Hostname = hostname
+			response.Message.Time = time.Since(start).String()
+			response.Message.Status = http.StatusText(http.StatusOK)
+			response.Message.Count = strconv.Itoa(len(response.Files))
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+
+			if err := response.ToJSON(w); err != nil {
+				//writeResponseFromResults(w, start, response)
+				log.Errorf("SearchFilesByTagHandler: %v", err)
+				routeHandlerError(w, err.Error(), http.StatusInternalServerError)
+			}
+		} else {
+			log.Errorf("SearchFilesByTagHandler: %v", response.Message)
+			routeHandlerError(w, response.Message.ErrorLogs[0], http.StatusInternalServerError)
+		}
+	}
 }
 
 func (h *Handler) UpdateDatabaseWithS3Data() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-
 		if serviceErr := h.Service.UpdateDatabaseFromS3Bucket(
 			r.Context(), devBucket,
 		); serviceErr == nil {
 			writeResponse(w, start)
 		} else {
-			log.Errorf("InsertNewFileHandler: %v", *serviceErr)
-			routeHandlerError(w, *serviceErr, http.StatusBadRequest)
+			log.Errorf("UpdateDatabaseWithS3Data: %v", *serviceErr)
+			routeHandlerError(w, *serviceErr, http.StatusInternalServerError)
 		}
 	}
 }
@@ -72,7 +107,7 @@ func (h *Handler) InsertNewFileHandler() http.HandlerFunc {
 			writeResponse(w, start)
 		} else {
 			log.Errorf("InsertNewFileHandler: %v", *serviceErr)
-			routeHandlerError(w, *serviceErr, http.StatusBadRequest)
+			routeHandlerError(w, *serviceErr, http.StatusInternalServerError)
 		}
 	}
 }
@@ -166,6 +201,15 @@ func writeResponse(w http.ResponseWriter, start time.Time) {
 			Status:   http.StatusText(http.StatusOK),
 		},
 	)
+}
+
+func writeResponseFromResults(w http.ResponseWriter, start time.Time, results any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	//hostname, _ := os.Hostname()
+
+	_ = json.NewEncoder(w).Encode(&results)
 }
 
 const (

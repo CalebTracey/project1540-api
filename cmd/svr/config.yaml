@@ -15,5 +15,5 @@ Databases:
     Server: "db.ixtnpmyylxetisdrjjqm.supabase.co:5432"
     Username: "postgres"
     Scheme: "postgres"
-    AuthRequired: "true"
+    AuthRequired: true
     AuthEnvironmentVariable: "SUPABASE_DB_PASSWORD"

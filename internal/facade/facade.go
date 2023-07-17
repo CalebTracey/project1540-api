@@ -35,6 +35,7 @@ func (s Service) UpdateDatabaseFromS3Bucket(ctx context.Context, bucket string) 
 	if objectNames, err := s.S3.GetS3ObjectNames(
 		ctx, bucket,
 	); err == nil {
+
 		g.SetLimit(len(objectNames))
 
 		for _, fileName := range objectNames {

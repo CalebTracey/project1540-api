@@ -28,16 +28,18 @@ type MiddlewareOption func(next http.Handler) http.Handler
 func (h *Handler) InitializeRoutes(options ...MiddlewareOption) *chi.Mux {
 	r := chi.NewRouter()
 
-	for _, middlewareOption := range options {
-		r.Use(middlewareOption)
-	}
-
 	// REST endpoints
-	r.Post("/put", h.UploadS3Handler())
-	r.Post("/get", h.DownloadS3Handler())
-	r.Post("/newFile", h.InsertNewFileHandler())
-	r.Post("/update", h.UpdateDatabaseWithS3Data())
-	r.Post("/search", h.SearchFilesByTagHandler())
+	r.Route("/api", func(r chi.Router) {
+		for _, middlewareOption := range options {
+			r.Use(middlewareOption)
+		}
+
+		r.Post("/put", h.UploadS3Handler())
+		r.Post("/get", h.DownloadS3Handler())
+		r.Post("/newFile", h.InsertNewFileHandler())
+		r.Post("/update", h.UpdateDatabaseWithS3Data())
+		r.Post("/search", h.SearchFilesByTagHandler())
+	})
 
 	return r
 }

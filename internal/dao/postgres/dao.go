@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"project1540-api/external/models/postgres"
+	"github.com/calebtracey/project1540-api/external/models/postgres"
 )
 
 //go:generate mockgen -source=dao.go -destination=mock/dao.go -package=postgres

@@ -2,10 +2,10 @@ package postgres
 
 import (
 	"context"
+	"github.com/calebtracey/project1540-api/external/models"
+	"github.com/calebtracey/project1540-api/external/models/postgres"
+	postgresSrc "github.com/calebtracey/project1540-api/internal/dao/postgres"
 	"net/http"
-	"project1540-api/external/models"
-	"project1540-api/external/models/postgres"
-	postgresSrc "project1540-api/internal/dao/postgres"
 )
 
 //go:generate mockgen -source=facade.go -destination=mock/facade.go -package=postgres

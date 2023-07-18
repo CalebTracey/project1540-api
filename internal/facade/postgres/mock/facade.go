@@ -6,10 +6,10 @@ package postgres
 
 import (
 	context "context"
-	models "project1540-api/external/models"
-	postgres "project1540-api/external/models/postgres"
 	reflect "reflect"
 
+	models "github.com/calebtracey/project1540-api/external/models"
+	postgres "github.com/calebtracey/project1540-api/external/models/postgres"
 	gomock "go.uber.org/mock/gomock"
 )
 

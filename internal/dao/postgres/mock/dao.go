@@ -6,9 +6,9 @@ package postgres
 
 import (
 	context "context"
-	postgres "project1540-api/external/models/postgres"
 	reflect "reflect"
 
+	postgres "github.com/calebtracey/project1540-api/external/models/postgres"
 	gomock "go.uber.org/mock/gomock"
 )
 

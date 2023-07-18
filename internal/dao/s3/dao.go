@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	svcS3 "github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/calebtracey/project1540-api/external/models/s3"
 	log "github.com/sirupsen/logrus"
-	"project1540-api/external/models/s3"
 )
 
 //go:generate mockgen -source=dao.go -destination=mock/dao.go -package=s3

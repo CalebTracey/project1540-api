@@ -1,6 +1,6 @@
 package s3
 
-import "project1540-api/external/models"
+import "github.com/calebtracey/project1540-api/external/models"
 
 type DownloadS3Response struct {
 	Message models.Message `json:"message,omitempty"`

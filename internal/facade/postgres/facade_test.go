@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"context"
+	"github.com/calebtracey/project1540-api/external/models/postgres"
+	postgres2 "github.com/calebtracey/project1540-api/internal/dao/postgres/mock"
 	"go.uber.org/mock/gomock"
-	"project1540-api/external/models/postgres"
-	postgres2 "project1540-api/internal/dao/postgres/mock"
 	"reflect"
 	"testing"
 )

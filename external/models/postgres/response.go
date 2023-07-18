@@ -3,8 +3,8 @@ package postgres
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/calebtracey/project1540-api/external/models"
 	"net/http"
-	"project1540-api/external/models"
 )
 
 type FileResponse struct {

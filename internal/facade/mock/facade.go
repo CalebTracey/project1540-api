@@ -6,12 +6,12 @@ package facade
 
 import (
 	context "context"
-	models "project1540-api/external/models"
-	postgres "project1540-api/external/models/postgres"
-	s30 "project1540-api/external/models/s3"
 	reflect "reflect"
 
 	s3 "github.com/aws/aws-sdk-go-v2/service/s3"
+	models "github.com/calebtracey/project1540-api/external/models"
+	postgres "github.com/calebtracey/project1540-api/external/models/postgres"
+	s30 "github.com/calebtracey/project1540-api/external/models/s3"
 	gomock "go.uber.org/mock/gomock"
 )
 

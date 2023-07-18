@@ -3,10 +3,10 @@ package s3
 import (
 	"context"
 	svcS3 "github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/calebtracey/project1540-api/external/models"
+	"github.com/calebtracey/project1540-api/external/models/s3"
+	daoS3 "github.com/calebtracey/project1540-api/internal/dao/s3"
 	log "github.com/sirupsen/logrus"
-	"project1540-api/external/models"
-	"project1540-api/external/models/s3"
-	daoS3 "project1540-api/internal/dao/s3"
 )
 
 //go:generate mockgen -source=facade.go -destination=mock/facade.go -package=s3

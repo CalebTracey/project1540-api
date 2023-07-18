@@ -24,17 +24,31 @@ func (s Service) UploadS3Object(ctx context.Context, request s3.UploadS3Request)
 	// TODO: validate request
 	if err := s.S3DAO.PutObject(ctx, request); err != nil {
 		log.Error(err)
-		return err
+		return &models.ErrorLog{
+			RootCause: err.Error(),
+		}
 	}
 	return nil
 }
 
 func (s Service) DownloadS3Object(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, *models.ErrorLog) {
 	// TODO: validate request
-	return s.S3DAO.GetObject(ctx, request)
+	if resp, err := s.S3DAO.GetObject(ctx, request); err == nil {
+		return resp, nil
+	} else {
+		return nil, &models.ErrorLog{
+			RootCause: err.Error(),
+		}
+	}
 }
 
 func (s Service) GetS3ObjectNames(ctx context.Context, bucketName string) ([]string, *models.ErrorLog) {
 	// TODO: validate request
-	return s.S3DAO.GetAllObjectNames(ctx, bucketName)
+	if resp, err := s.S3DAO.GetAllObjectNames(ctx, bucketName); err == nil {
+		return resp, nil
+	} else {
+		return nil, &models.ErrorLog{
+			RootCause: err.Error(),
+		}
+	}
 }

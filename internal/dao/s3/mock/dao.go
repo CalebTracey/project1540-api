@@ -6,7 +6,6 @@ package s3
 
 import (
 	context "context"
-	models "project1540-api/external/models"
 	s30 "project1540-api/external/models/s3"
 	reflect "reflect"
 
@@ -38,11 +37,11 @@ func (m *MockIDAO) EXPECT() *MockIDAOMockRecorder {
 }
 
 // GetAllObjectNames mocks base method.
-func (m *MockIDAO) GetAllObjectNames(ctx context.Context, bucketName string) ([]string, *models.ErrorLog) {
+func (m *MockIDAO) GetAllObjectNames(ctx context.Context, bucketName string) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllObjectNames", ctx, bucketName)
 	ret0, _ := ret[0].([]string)
-	ret1, _ := ret[1].(*models.ErrorLog)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -53,11 +52,11 @@ func (mr *MockIDAOMockRecorder) GetAllObjectNames(ctx, bucketName interface{}) *
 }
 
 // GetObject mocks base method.
-func (m *MockIDAO) GetObject(ctx context.Context, request s30.DownloadS3Request) (*s3.GetObjectOutput, *models.ErrorLog) {
+func (m *MockIDAO) GetObject(ctx context.Context, request s30.DownloadS3Request) (*s3.GetObjectOutput, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetObject", ctx, request)
 	ret0, _ := ret[0].(*s3.GetObjectOutput)
-	ret1, _ := ret[1].(*models.ErrorLog)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
@@ -68,10 +67,10 @@ func (mr *MockIDAOMockRecorder) GetObject(ctx, request interface{}) *gomock.Call
 }
 
 // PutObject mocks base method.
-func (m *MockIDAO) PutObject(ctx context.Context, input s30.UploadS3Request) *models.ErrorLog {
+func (m *MockIDAO) PutObject(ctx context.Context, input s30.UploadS3Request) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutObject", ctx, input)
-	ret0, _ := ret[0].(*models.ErrorLog)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 

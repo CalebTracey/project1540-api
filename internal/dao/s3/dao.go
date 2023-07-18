@@ -2,26 +2,24 @@ package s3
 
 import (
 	"context"
+	"fmt"
 	svcS3 "github.com/aws/aws-sdk-go-v2/service/s3"
 	log "github.com/sirupsen/logrus"
-	"net/http"
-	"project1540-api/external/models"
 	"project1540-api/external/models/s3"
 )
 
 //go:generate mockgen -source=dao.go -destination=mock/dao.go -package=s3
 type IDAO interface {
-	PutObject(ctx context.Context, input s3.UploadS3Request) *models.ErrorLog
-	GetObject(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, *models.ErrorLog)
-	GetAllObjectNames(ctx context.Context, bucketName string) ([]string, *models.ErrorLog)
+	PutObject(ctx context.Context, input s3.UploadS3Request) error
+	GetObject(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, error)
+	GetAllObjectNames(ctx context.Context, bucketName string) ([]string, error)
 }
 
 type DAO struct {
 	*svcS3.Client
 }
 
-func (s DAO) PutObject(ctx context.Context, input s3.UploadS3Request) *models.ErrorLog {
-
+func (s DAO) PutObject(ctx context.Context, input s3.UploadS3Request) error {
 	if _, err := s.Client.PutObject(
 		ctx, &svcS3.PutObjectInput{
 			Bucket: &input.DestBucket,
@@ -29,16 +27,12 @@ func (s DAO) PutObject(ctx context.Context, input s3.UploadS3Request) *models.Er
 			Body:   input.File,
 		},
 	); err != nil {
-		return &models.ErrorLog{
-			StatusCode: http.StatusInternalServerError,
-			RootCause:  err.Error(),
-			Trace:      "PutObject",
-		}
+		return fmt.Errorf("PutObject: %w", err)
 	}
 	return nil // success
 }
 
-func (s DAO) GetObject(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, *models.ErrorLog) {
+func (s DAO) GetObject(ctx context.Context, request s3.DownloadS3Request) (*svcS3.GetObjectOutput, error) {
 	if object, err := s.Client.GetObject(
 		ctx, &svcS3.GetObjectInput{
 			Bucket: &request.BucketName,
@@ -49,17 +43,12 @@ func (s DAO) GetObject(ctx context.Context, request s3.DownloadS3Request) (*svcS
 		return object, nil
 	} else {
 		log.Error(err)
-		return nil, &models.ErrorLog{
-			RootCause:  err.Error(),
-			Trace:      "GetObject",
-			StatusCode: http.StatusInternalServerError,
-		}
+		return nil, fmt.Errorf("GetObject: %w", err)
 	}
 }
 
-func (s DAO) GetAllObjectNames(ctx context.Context, bucketName string) ([]string, *models.ErrorLog) {
+func (s DAO) GetAllObjectNames(ctx context.Context, bucketName string) ([]string, error) {
 	var objectNames []string
-
 	paginator := svcS3.NewListObjectsV2Paginator(
 		s.Client, &svcS3.ListObjectsV2Input{Bucket: &bucketName},
 	)
@@ -71,14 +60,8 @@ func (s DAO) GetAllObjectNames(ctx context.Context, bucketName string) ([]string
 				objectNames = append(objectNames, *obj.Key)
 			}
 		} else {
-			return nil, &models.ErrorLog{
-				RootCause:  err.Error(),
-				Trace:      "GetAllObjectNames",
-				StatusCode: http.StatusInternalServerError,
-			}
+			return nil, fmt.Errorf("GetAllObjectNames: %w", err)
 		}
-
 	}
-
 	return objectNames, nil
 }

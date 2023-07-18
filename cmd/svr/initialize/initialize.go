@@ -3,7 +3,6 @@ package initialize
 import (
 	"context"
 	"github.com/calebtraceyco/config"
-
 	log "github.com/sirupsen/logrus"
 	initialize "project1540-api/cmd/svr/initialize/s3"
 	"project1540-api/internal/dao/postgres"

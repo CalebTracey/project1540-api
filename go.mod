@@ -1,4 +1,4 @@
-module project1540-api
+module github.com/calebtracey/project1540-api
 
 go 1.20
 

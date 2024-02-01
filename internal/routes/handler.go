@@ -3,6 +3,10 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/calebtracey/project1540-api/external/models"
+	"github.com/calebtracey/project1540-api/external/models/postgres"
+	"github.com/calebtracey/project1540-api/external/models/s3"
+	"github.com/calebtracey/project1540-api/internal/facade"
 	"github.com/go-chi/chi/v5"
 	log "github.com/sirupsen/logrus"
 	"io"
@@ -10,10 +14,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"project1540-api/external/models"
-	"project1540-api/external/models/postgres"
-	"project1540-api/external/models/s3"
-	"project1540-api/internal/facade"
 	"strconv"
 	"time"
 )
@@ -28,16 +28,18 @@ type MiddlewareOption func(next http.Handler) http.Handler
 func (h *Handler) InitializeRoutes(options ...MiddlewareOption) *chi.Mux {
 	r := chi.NewRouter()
 
-	for _, middlewareOption := range options {
-		r.Use(middlewareOption)
-	}
-
 	// REST endpoints
-	r.Post("/put", h.UploadS3Handler())
-	r.Post("/get", h.DownloadS3Handler())
-	r.Post("/newFile", h.InsertNewFileHandler())
-	r.Post("/update", h.UpdateDatabaseWithS3Data())
-	r.Post("/search", h.SearchFilesByTagHandler())
+	r.Route("/api", func(r chi.Router) {
+		for _, middlewareOption := range options {
+			r.Use(middlewareOption)
+		}
+
+		r.Post("/put", h.UploadS3Handler())
+		r.Post("/get", h.DownloadS3Handler())
+		r.Post("/newFile", h.InsertNewFileHandler())
+		r.Post("/update", h.UpdateDatabaseWithS3Data())
+		r.Post("/search", h.SearchFilesByTagHandler())
+	})
 
 	return r
 }
@@ -66,7 +68,7 @@ func (h *Handler) SearchFilesByTagHandler() http.HandlerFunc {
 			w.WriteHeader(http.StatusOK)
 
 			if err := response.ToJSON(w); err != nil {
-				//writeResponseFromResults(w, start, response)
+				// writeResponseFromResults(w, start, response)
 				log.Errorf("SearchFilesByTagHandler: %v", err)
 				routeHandlerError(w, err.Error(), http.StatusInternalServerError)
 			}

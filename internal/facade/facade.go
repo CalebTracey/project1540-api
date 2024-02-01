@@ -4,19 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/calebtracey/project1540-api/external/models"
+	psqlModels "github.com/calebtracey/project1540-api/external/models/postgres"
+	"github.com/calebtracey/project1540-api/internal/facade/postgres"
+	"github.com/calebtracey/project1540-api/internal/facade/s3"
+	"github.com/calebtracey/project1540-api/internal/services/parser"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"net/http"
-	"project1540-api/external/models"
-	postgres2 "project1540-api/external/models/postgres"
-	"project1540-api/internal/facade/postgres"
-	"project1540-api/internal/facade/s3"
-	"project1540-api/internal/services/parser"
 )
 
+//go:generate mockgen -source=facade.go -destination=mock/facade.go -package=facade
 type IFacade interface {
 	UpdateDatabaseFromS3Bucket(ctx context.Context, bucket string) *models.ErrorLog
-	InsertNewFileByS3Bucket(ctx context.Context, req postgres2.NewFileRequest) *models.ErrorLog
+	InsertNewFileByS3Bucket(ctx context.Context, req psqlModels.NewFileRequest) *models.ErrorLog
 
 	s3.IS3Facade
 	postgres.IFacade
@@ -35,15 +36,16 @@ func (s Service) UpdateDatabaseFromS3Bucket(ctx context.Context, bucket string) 
 	if objectNames, err := s.S3.GetS3ObjectNames(
 		ctx, bucket,
 	); err == nil {
+
 		g.SetLimit(len(objectNames))
 
 		for _, fileName := range objectNames {
 			fileName := fileName
-
 			g.Go(func() error {
 				if tags, fileType, parseErr := s.Parser.ExtractTags(fileName); parseErr == nil {
+					// TODO: add some sort of S3 pre-signed URL generation
 					if postgresErr := s.PostgresQL.InsertNewFileDetails(
-						ctx, fileName, fileType, "url", tags,
+						ctx, fileName, fileType, "temp", tags,
 					); postgresErr == nil {
 						return nil // success
 					} else {
@@ -67,7 +69,7 @@ func (s Service) UpdateDatabaseFromS3Bucket(ctx context.Context, bucket string) 
 	return nil // success
 }
 
-func (s Service) InsertNewFileByS3Bucket(ctx context.Context, req postgres2.NewFileRequest) *models.ErrorLog {
+func (s Service) InsertNewFileByS3Bucket(ctx context.Context, req psqlModels.NewFileRequest) *models.ErrorLog {
 	if tags, fileType, parseErr := s.Parser.ExtractTags(req.Name); parseErr == nil {
 		if dbErr := s.PostgresQL.InsertNewFileDetails(
 			ctx, req.Name, fileType, req.Url, tags,

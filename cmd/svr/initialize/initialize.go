@@ -2,17 +2,16 @@ package initialize
 
 import (
 	"context"
+	initialize "github.com/calebtracey/project1540-api/cmd/svr/initialize/s3"
+	"github.com/calebtracey/project1540-api/internal/dao/postgres"
+	daoS3 "github.com/calebtracey/project1540-api/internal/dao/s3"
+	"github.com/calebtracey/project1540-api/internal/facade"
+	facadePsql "github.com/calebtracey/project1540-api/internal/facade/postgres"
+	facadeS3 "github.com/calebtracey/project1540-api/internal/facade/s3"
+	"github.com/calebtracey/project1540-api/internal/routes"
+	"github.com/calebtracey/project1540-api/internal/services/parser"
 	"github.com/calebtraceyco/config"
-
 	log "github.com/sirupsen/logrus"
-	initialize "project1540-api/cmd/svr/initialize/s3"
-	"project1540-api/internal/dao/postgres"
-	daoS3 "project1540-api/internal/dao/s3"
-	"project1540-api/internal/facade"
-	facadePsql "project1540-api/internal/facade/postgres"
-	facadeS3 "project1540-api/internal/facade/s3"
-	"project1540-api/internal/routes"
-	"project1540-api/internal/services/parser"
 )
 
 const (

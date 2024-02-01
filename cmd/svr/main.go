@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"github.com/NYTimes/gziphandler"
+	"github.com/calebtracey/project1540-api/cmd/svr/initialize"
+	"github.com/calebtracey/project1540-api/internal/routes"
 	"github.com/calebtraceyco/config"
 	"github.com/go-chi/chi/v5/middleware"
-	"project1540-api/cmd/svr/initialize"
 	"time"
 
 	"github.com/calebtraceyco/http/server"
@@ -23,9 +24,10 @@ func main() {
 	if service, svcErr := initialize.NewService(ctx, appConfig); svcErr != nil {
 		log.Panicln(svcErr)
 	} else {
+		handler := routes.Handler(service)
 		log.Fatal(server.ListenAndServe(
 			appConfig.Port, appConfig.Env, gziphandler.GzipHandler(
-				service.InitializeRoutes(
+				handler.InitializeRoutes(
 					middleware.RequestID,
 					middleware.RealIP,
 					middleware.Logger,
